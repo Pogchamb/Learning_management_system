@@ -1,3 +1,21 @@
 spring:
   application:
     name: learning_management_system
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/learning_management_sys}
+    username: ${DB_USER:learn_user}
+    password: ${DB_PASSWORD:learn_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+    open-in-view: false
+  sql:
+    init:
+      mode: never
+
