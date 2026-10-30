@@ -1,29 +1,34 @@
 package pa.chan.learning_management_system.repository;
 
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pa.chan.learning_management_system.entity.Group;
-import pa.chan.learning_management_system.exception.ResourceNotFoundException;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface GroupRepository extends JpaRepository<Group, Long> {
-
-    default Group findGroupByIdOrThrow(Long id) {
-        return findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Group " + id + " not found"));
+public interface GroupRepository extends BaseRepository<Group> {
+    @Override
+    default String getEntityName() {
+        return "Группа";
     }
 
-    default List<Group> findGroupByIdsOrThrow(Collection<Long> ids) {
-        List<Group> foundGroup = findAllById(ids);
+    @EntityGraph(attributePaths = {"studentsGroup"})
+    Optional<Group> findWithStudentsById(Long id);
 
-        if (findAllById(ids).size() != ids.size()) {
-            throw new ResourceNotFoundException("Одна или несколько указанных групп не найдены");
-        }
+    boolean existsByGroupNameIgnoreCase(String groupName);
 
-        return foundGroup;
-    }
+    boolean existsByGroupNameIgnoreCaseAndIdNot(String name, Long id);
+
+    @Query("""
+            SELECT CASE WHEN count (s) > 0 THEN true ELSE false END
+            FROM Student s
+            JOIN s.groups g
+            WHERE g.id = :groupId
+            AND size(s.groups) = 1
+            """)
+    boolean studentHasOnlyOneGroup(@Param("groupId") Long groupId);
 }

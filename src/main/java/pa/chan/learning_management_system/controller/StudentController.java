@@ -2,8 +2,10 @@ package pa.chan.learning_management_system.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -51,16 +53,16 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StudentResponseDto> getCourseById(
+    public ResponseEntity<StudentResponseDto> getStudentById(
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(studentService.getStudent(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<StudentResponseDto>> getCourses(Pageable pageable) {
+    public ResponseEntity<Page<StudentResponseDto>> getAllStudents(
+            @ParameterObject @PageableDefault(size = 20, sort = "lastName") Pageable pageable
+    ) {
         return ResponseEntity.ok(studentService.getStudents(pageable));
     }
-
-
 }

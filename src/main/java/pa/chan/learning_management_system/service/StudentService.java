@@ -13,7 +13,7 @@ import pa.chan.learning_management_system.mapper.StudentMapper;
 import pa.chan.learning_management_system.repository.GroupRepository;
 import pa.chan.learning_management_system.repository.StudentRepository;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,26 +29,26 @@ public class StudentService {
     // TODO Добавление Student
     @Transactional
     public StudentResponseDto createStudent(StudentRequestDto studentRequestDto) {
-        List<Group> foundGroup = groupRepository.findGroupByIdsOrThrow(studentRequestDto.groupIds());
+        Set<Group> foundGroups = groupRepository.findAllByIdsOrThrow(studentRequestDto.groupIds());
 
-        Student newStudent = new Student();
-        newStudent.setFirstName(studentRequestDto.firstName());
-        newStudent.setLastName(studentRequestDto.lastName());
-        newStudent.addGroups(foundGroup);
+        Student student = studentMapper.toEntity(studentRequestDto);
+        for (Group group : foundGroups) {
+            student.addGroup(group);
+        }
 
-        return studentMapper.toDto(studentRepository.save(newStudent));
+        return studentMapper.toDto(studentRepository.save(student));
     }
 
     // TODO Изменение Student
 
     @Transactional
     public StudentResponseDto updateStudent(Long id, StudentRequestDto studentRequestDto) {
-        Student studentForUpdate = studentRepository.findStudentByIdOrThrow(id);
-        List<Group> foundGroup = groupRepository.findGroupByIdsOrThrow(studentRequestDto.groupIds());
+        Student studentForUpdate = studentRepository.findByIdOrThrow(id);
+        Set<Group> foundGroup = groupRepository.findAllByIdsOrThrow(studentRequestDto.groupIds());
 
-        studentForUpdate.setFirstName(studentRequestDto.firstName());
-        studentForUpdate.setLastName(studentRequestDto.lastName());
-        studentForUpdate.addGroups(foundGroup);
+        studentMapper.updateEntity(studentRequestDto, studentForUpdate);
+        studentForUpdate.getGroups().clear();
+        foundGroup.forEach(studentForUpdate::addGroup);
 
         return studentMapper.toDto(studentForUpdate);
     }
@@ -56,13 +56,14 @@ public class StudentService {
     // TODO deleteStudent
     @Transactional
     public void deleteStudent(Long id) {
-        studentRepository.deleteById(id);
+        Student student = studentRepository.findByIdOrThrow(id);
+        studentRepository.delete(student);
     }
 
     // TODO Добавление Student в Группы
     @Transactional(readOnly = true)
     public StudentResponseDto getStudent(Long id) {
-        return studentMapper.toDto(studentRepository.findStudentByIdOrThrow(id));
+        return studentMapper.toDto(studentRepository.findWithGroupsByIdOrThrow(id));
     }
 
     @Transactional(readOnly = true)

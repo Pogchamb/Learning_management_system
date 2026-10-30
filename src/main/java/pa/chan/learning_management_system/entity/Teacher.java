@@ -1,7 +1,10 @@
 package pa.chan.learning_management_system.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "teachers")
@@ -10,11 +13,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Teacher {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@BatchSize(size = 50)
+public class Teacher extends BaseEntity {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 

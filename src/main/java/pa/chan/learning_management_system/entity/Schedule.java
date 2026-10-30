@@ -8,15 +8,20 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "schedules")
+@Table(
+        name = "schedules",
+        indexes = {
+                @Index(name = "idx_schedule_group_start", columnList = "group_id, start_time"),
+                @Index(name = "idx_schedule_teacher_start", columnList = "teacher_id, start_time"),
+                @Index(name = "idx_schedule_end_time", columnList = "end_time")
+        }
+)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Schedule {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Builder
+public class Schedule extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -40,13 +45,5 @@ public class Schedule {
     @NotNull
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
-
-    @AssertTrue(message = "Время окончания занятия, должно быть позже времени начала.")
-    private boolean isValidTimeRange() {
-        if (startTime == null || endTime == null) {
-            return true;
-        }
-        return endTime.isAfter(startTime);
-    }
 
 }

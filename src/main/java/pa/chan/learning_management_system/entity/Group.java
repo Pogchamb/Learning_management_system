@@ -1,34 +1,39 @@
 package pa.chan.learning_management_system.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "groups")
+@Table(name = "student_groups")
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Group {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    private Long id;
-
+public class Group extends BaseEntity {
     @Column(name = "group_name", nullable = false)
     private String groupName;
 
-    @ManyToMany(mappedBy = "studentGroups")
+    @Builder.Default
+    @BatchSize(size = 50)
+    @ManyToMany(mappedBy = "groups")
     private Set<Student> studentsInGroup = new HashSet<>();
+
+    @Builder.Default
+    @BatchSize(size = 50)
+    @ManyToMany(mappedBy = "groups")
+    private Set<Course> courses = new HashSet<>();
 
     public void addStudents(Collection<Student> studentsToAdd) {
         this.studentsInGroup.addAll(studentsToAdd);
-        studentsToAdd.forEach(student -> student.getStudentGroups().add(this));
+        studentsToAdd.forEach(student -> student.getGroups().add(this));
     }
 }

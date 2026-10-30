@@ -2,8 +2,10 @@ package pa.chan.learning_management_system.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,7 +30,7 @@ public class CourseController {
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/id")
+                .path("/{id}")
                 .buildAndExpand(createdCourse.id())
                 .toUri();
 
@@ -59,8 +61,26 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CourseResponseDto>> getCourses(Pageable pageable) {
+    public ResponseEntity<Page<CourseResponseDto>> getAllCourses(
+            @ParameterObject @PageableDefault(size = 20, sort = "courseName") Pageable pageable
+    ) {
         return ResponseEntity.ok(courseService.getCourses(pageable));
+    }
+
+    @PostMapping("/{courseId}/groups/{groupId}")
+    public ResponseEntity<CourseResponseDto> addGroupToCourse(
+            @PathVariable Long courseId,
+            @PathVariable Long groupId
+    ) {
+        return ResponseEntity.ok(courseService.addGroupToCourse(courseId, groupId));
+    }
+
+    @DeleteMapping("/{courseId}/groups/{groupId}")
+    public ResponseEntity<CourseResponseDto> removeGroupFromCourse(
+            @PathVariable Long courseId,
+            @PathVariable Long groupId
+    ) {
+        return ResponseEntity.ok(courseService.removeGroupFromCourse(courseId, groupId));
     }
 
 }

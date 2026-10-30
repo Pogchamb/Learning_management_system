@@ -2,13 +2,18 @@ package pa.chan.learning_management_system.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pa.chan.learning_management_system.dto.request.TeacherRequestDto;
+import pa.chan.learning_management_system.dto.response.ScheduleResponseDto;
 import pa.chan.learning_management_system.dto.response.TeacherResponseDto;
+import pa.chan.learning_management_system.service.ScheduleService;
 import pa.chan.learning_management_system.service.TeacherService;
 
 import java.net.URI;
@@ -19,10 +24,11 @@ import java.net.URI;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final ScheduleService scheduleService;
 
 
     @PostMapping
-    public ResponseEntity<TeacherResponseDto> createStudent(
+    public ResponseEntity<TeacherResponseDto> createTeacher(
             @Valid @RequestBody TeacherRequestDto teacherRequestDto
     ) {
         TeacherResponseDto created = teacherService.createTeacher(teacherRequestDto);
@@ -36,14 +42,14 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TeacherResponseDto> updateStudent(
+    public ResponseEntity<TeacherResponseDto> updateTeacher(
             @PathVariable Long id,
             @Valid @RequestBody TeacherRequestDto teacherRequestDto) {
         return ResponseEntity.ok(teacherService.updateStudent(id, teacherRequestDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(
+    public ResponseEntity<Void> deleteTeacher(
             @PathVariable Long id
     ) {
         teacherService.deleteTeacher(id);
@@ -58,7 +64,17 @@ public class TeacherController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TeacherResponseDto>> getCourses(Pageable pageable) {
+    public ResponseEntity<Page<TeacherResponseDto>> getTeachers(
+            @ParameterObject @PageableDefault(size = 20, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
         return ResponseEntity.ok(teacherService.getTeachers(pageable));
+    }
+
+    @GetMapping({"/{id}/schedules"})
+    public ResponseEntity<Page<ScheduleResponseDto>> getTeacherSchedules(
+            @PathVariable Long id,
+            @ParameterObject @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(scheduleService.getScheduleByTeacher(id, pageable));
     }
 }
