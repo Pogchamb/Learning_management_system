@@ -1,5 +1,6 @@
 package pa.chan.learning_management_system.repository;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -24,6 +25,7 @@ public interface ScheduleRepository extends BaseRepository<Schedule>, JpaSpecifi
 
     @Override
     @EntityGraph(attributePaths = {"group", "teacher", "course"})
+    @NullMarked
     Page<Schedule> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"group", "teacher", "course"})
