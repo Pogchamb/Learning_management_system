@@ -27,7 +27,6 @@ public class CourseService {
     private final ScheduleRepository scheduleRepository;
     private final CourseMapper courseMapper;
 
-    // TODO create
     @Transactional
     public CourseResponseDto createCourse(CourseRequestDto courseRequestDto) {
         if (courseRepository.existsByCourseNameIgnoreCase(courseRequestDto.courseName())) {
@@ -42,7 +41,6 @@ public class CourseService {
         return courseMapper.toDto(newCourse);
     }
 
-    // TODO update
     @Transactional
     public CourseResponseDto updateCourse(Long id, CourseRequestDto courseRequestDto) {
         Course courseForUpdate = courseRepository.findWithDetailsByIdOrThrow(id);
@@ -57,7 +55,6 @@ public class CourseService {
         return courseMapper.toDto(courseForUpdate);
     }
 
-    // TODO delete
     @Transactional
     public void deleteCourse(Long id) {
         Course courseToDelete = courseRepository.findByIdOrThrow(id);
@@ -71,7 +68,7 @@ public class CourseService {
         courseRepository.delete(courseToDelete);
     }
 
-    // TODO
+
     @Transactional(readOnly = true)
     public CourseResponseDto getCourse(Long id) {
         return courseMapper.toDto(courseRepository.findWithDetailsByIdOrThrow(id));

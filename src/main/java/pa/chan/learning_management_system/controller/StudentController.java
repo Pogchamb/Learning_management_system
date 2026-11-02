@@ -1,5 +1,7 @@
 package pa.chan.learning_management_system.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -18,11 +20,13 @@ import java.net.URI;
 @RestController
 @RequestMapping("/students")
 @RequiredArgsConstructor
+@Tag(name = "Студенты", description = "Управление студентами и их привязкой к группам")
 public class StudentController {
 
     private final StudentService studentService;
 
 
+    @Operation(summary = "Добавить нового студента")
     @PostMapping
     public ResponseEntity<StudentResponseDto> createStudent(
             @Valid @RequestBody StudentRequestDto studentRequestDto
@@ -37,6 +41,7 @@ public class StudentController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @Operation(summary = "Изменить данные студента и список его групп")
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDto> updateStudent(
             @PathVariable Long id,
@@ -44,6 +49,7 @@ public class StudentController {
         return ResponseEntity.ok(studentService.updateStudent(id, studentRequestDto));
     }
 
+    @Operation(summary = "Удалить студента")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(
             @PathVariable Long id
@@ -52,6 +58,7 @@ public class StudentController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Получить студента по Id вместе со списком его групп")
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponseDto> getStudentById(
             @PathVariable Long id
@@ -59,6 +66,7 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudent(id));
     }
 
+    @Operation(summary = "Получить список всех студентов")
     @GetMapping
     public ResponseEntity<Page<StudentResponseDto>> getAllStudents(
             @ParameterObject @PageableDefault(size = 20, sort = "lastName") Pageable pageable

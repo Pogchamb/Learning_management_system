@@ -18,6 +18,7 @@ import pa.chan.learning_management_system.repository.CourseRepository;
 import pa.chan.learning_management_system.repository.GroupRepository;
 import pa.chan.learning_management_system.repository.ScheduleRepository;
 import pa.chan.learning_management_system.repository.TeacherRepository;
+import pa.chan.learning_management_system.specification.ScheduleSpecifications;
 
 import java.time.LocalDateTime;
 
@@ -34,6 +35,12 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public ScheduleResponseDto getScheduleById(Long id) {
         return scheduleMapper.toDto(scheduleRepository.findWithDetailsByIdOrThrow(id));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ScheduleResponseDto> getAllSchedules(Pageable pageable) {
+        return scheduleRepository.findAll(pageable)
+                .map(scheduleMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -93,8 +100,8 @@ public class ScheduleService {
     @Scheduled(cron = "${app.schedule.cleanup-cron:0 0 3 * * *}")
     @Transactional
     public void deleteSchedulesOlderThanOneYear() {
-        LocalDateTime threshold = LocalDateTime.now().minusYears(1);
-        int deleteCount = scheduleRepository.deleteSchedulesOlderThen(threshold);
+        LocalDateTime limit = LocalDateTime.now().minusYears(1);
+        scheduleRepository.deleteSchedulesOlderThen(limit);
     }
 
 
@@ -111,12 +118,14 @@ public class ScheduleService {
             );
         }
 
-        boolean hasOverlap = scheduleRepository.existsOverlappingSchedule(
-                requestDto.groupId(),
-                requestDto.teacherId(),
-                requestDto.startTime(),
-                requestDto.endTime(),
-                scheduleId
+        boolean hasOverlap = scheduleRepository.exists(
+                ScheduleSpecifications.hasOverlappingSchedule(
+                        requestDto.groupId(),
+                        requestDto.teacherId(),
+                        requestDto.startTime(),
+                        requestDto.endTime(),
+                        scheduleId
+                )
         );
 
         if (hasOverlap) {

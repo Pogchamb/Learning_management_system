@@ -1,7 +1,6 @@
 package pa.chan.learning_management_system.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

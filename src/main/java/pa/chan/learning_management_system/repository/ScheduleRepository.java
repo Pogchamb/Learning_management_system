@@ -3,6 +3,7 @@ package pa.chan.learning_management_system.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,12 +15,16 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface ScheduleRepository extends BaseRepository<Schedule> {
+public interface ScheduleRepository extends BaseRepository<Schedule>, JpaSpecificationExecutor<Schedule> {
 
     @Override
     default String getEntityName() {
         return "Расписание";
     }
+
+    @Override
+    @EntityGraph(attributePaths = {"group", "teacher", "course"})
+    Page<Schedule> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"group", "teacher", "course"})
     Optional<Schedule> findWithDetailsById(Long id);
@@ -41,23 +46,7 @@ public interface ScheduleRepository extends BaseRepository<Schedule> {
 
     boolean existsByGroupId(Long groupId);
 
-    @Query("""
-                SELECT case WHEN count(s) > 0 THEN true ELSE false END
-                FROM Schedule s
-                WHERE (:excludeId is null or s.id <> :excludeId)
-                AND (s.group.id = :groupId or s.teacher.id = :teacherId)
-                AND s.startTime < :endTime
-                AND s.endTime > :startTime
-            """)
-    boolean existsOverlappingSchedule(
-            @Param("groupId") Long groupId,
-            @Param("teacherId") Long teacherId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime,
-            @Param("excludeId") Long excludeId
-    );
-
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("delete from Schedule s where s.endTime < :threshold")
-    int deleteSchedulesOlderThen(@Param("threshold") LocalDateTime threshold);
+    @Query("delete from Schedule s where s.endTime < :limit")
+    void deleteSchedulesOlderThen(@Param("limit") LocalDateTime limit);
 }

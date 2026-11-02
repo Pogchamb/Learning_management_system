@@ -1,8 +1,6 @@
 package pa.chan.learning_management_system.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pa.chan.learning_management_system.entity.Student;
 import pa.chan.learning_management_system.exception.ResourceNotFoundException;
@@ -23,9 +21,4 @@ public interface StudentRepository extends BaseRepository<Student> {
         return findWithGroupsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Студент с id " + id + " не найден"));
     }
-
-    @Query("SELECT COUNT(g) FROM Student s JOIN s.groups g WHERE s.id = :studentId")
-    long countGroupsByStudentId(@Param("studentId") Long studentId);
-
-    boolean existsByIdAndGroupsId(Long studentId, Long groupId);
 }

@@ -1,7 +1,5 @@
 package pa.chan.learning_management_system.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 import pa.chan.learning_management_system.entity.Course;
@@ -15,10 +13,6 @@ public interface CourseRepository extends BaseRepository<Course> {
     default String getEntityName() {
         return "Курс";
     }
-
-    @Override
-    @EntityGraph(attributePaths = "teacher")
-    Page<Course> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"teacher", "groups"})
     Optional<Course> findWithDetailsById(Long id);

@@ -26,7 +26,6 @@ public class StudentService {
     final private StudentMapper studentMapper;
 
 
-    // TODO Добавление Student
     @Transactional
     public StudentResponseDto createStudent(StudentRequestDto studentRequestDto) {
         Set<Group> foundGroups = groupRepository.findAllByIdsOrThrow(studentRequestDto.groupIds());
@@ -38,8 +37,6 @@ public class StudentService {
 
         return studentMapper.toDto(studentRepository.save(student));
     }
-
-    // TODO Изменение Student
 
     @Transactional
     public StudentResponseDto updateStudent(Long id, StudentRequestDto studentRequestDto) {
@@ -53,14 +50,12 @@ public class StudentService {
         return studentMapper.toDto(studentForUpdate);
     }
 
-    // TODO deleteStudent
     @Transactional
     public void deleteStudent(Long id) {
         Student student = studentRepository.findByIdOrThrow(id);
         studentRepository.delete(student);
     }
 
-    // TODO Добавление Student в Группы
     @Transactional(readOnly = true)
     public StudentResponseDto getStudent(Long id) {
         return studentMapper.toDto(studentRepository.findWithGroupsByIdOrThrow(id));

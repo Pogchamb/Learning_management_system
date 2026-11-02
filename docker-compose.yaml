@@ -11,5 +11,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  app:
+    build: .
+    container_name: learning_sys-app
+    depends_on:
+      - postgres
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-learning_management_sys}
+      DB_USER: ${POSTGRES_USER:-learn_user}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-learn_password}
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:

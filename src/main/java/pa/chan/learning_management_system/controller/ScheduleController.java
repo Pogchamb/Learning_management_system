@@ -1,5 +1,7 @@
 package pa.chan.learning_management_system.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -19,10 +21,12 @@ import java.net.URI;
 @RestController
 @RequestMapping("/schedules")
 @RequiredArgsConstructor
+@Tag(name = "Расписание", description = "Управление расписанием")
 public class ScheduleController {
     private final ScheduleService scheduleService;
 
 
+    @Operation(summary = "Получить расписание по Id")
     @GetMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> getScheduleById(
             @PathVariable Long id
@@ -30,22 +34,15 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.getScheduleById(id));
     }
 
-    @GetMapping("/group/{groupId}")
-    public ResponseEntity<Page<ScheduleResponseDto>> getScheduleByGroup(
-            @PathVariable Long groupId,
+    @Operation(summary = "Получить всё расписание")
+    @GetMapping
+    public ResponseEntity<Page<ScheduleResponseDto>> getAllSchedules(
             @ParameterObject @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return ResponseEntity.ok(scheduleService.getScheduleByGroup(groupId, pageable));
+        return ResponseEntity.ok(scheduleService.getAllSchedules(pageable));
     }
 
-    @GetMapping("/teacher/{teacherId}")
-    public ResponseEntity<Page<ScheduleResponseDto>> getScheduleByTeacher(
-            @PathVariable Long teacherId,
-            @ParameterObject @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC) Pageable pageable
-    ) {
-        return ResponseEntity.ok(scheduleService.getScheduleByTeacher(teacherId, pageable));
-    }
-
+    @Operation(summary = "Создать новое расписание")
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> creteSchedule(
             @Valid @RequestBody ScheduleRequestDto scheduleRequestDto
@@ -60,6 +57,7 @@ public class ScheduleController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @Operation(summary = "Обновить расписание")
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
@@ -68,6 +66,7 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.updateSchedule(id, scheduleRequestDto));
     }
 
+    @Operation(summary = "Удалить расписание")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(
             @PathVariable Long id

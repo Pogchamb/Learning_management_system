@@ -26,15 +26,12 @@ public class TeacherService {
 
     private final TeacherMapper teacherMapper;
 
-    // TODO Добавление
     @Transactional
     public TeacherResponseDto createTeacher(TeacherRequestDto teacherRequestDto) {
         Teacher teacher = teacherMapper.toEntity(teacherRequestDto);
         teacherRepository.save(teacher);
         return teacherMapper.toDto(teacher);
     }
-
-    // TODO Изменение
 
     @Transactional
     public TeacherResponseDto updateStudent(Long id, TeacherRequestDto teacherRequestDto) {
@@ -43,7 +40,6 @@ public class TeacherService {
         return teacherMapper.toDto(teacherForUpdate);
     }
 
-    // TODO delete
     @Transactional
     public void deleteTeacher(Long id) {
         Teacher teacherToDelete = teacherRepository.findByIdOrThrow(id);
@@ -62,7 +58,6 @@ public class TeacherService {
         teacherRepository.delete(teacherToDelete);
     }
 
-    // TODO
     @Transactional(readOnly = true)
     public TeacherResponseDto getTeacher(Long id) {
         return teacherMapper.toDto(teacherRepository.findByIdOrThrow(id));

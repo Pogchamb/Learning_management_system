@@ -7,7 +7,6 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,8 +31,4 @@ public class Group extends BaseEntity {
     @ManyToMany(mappedBy = "groups")
     private Set<Course> courses = new HashSet<>();
 
-    public void addStudents(Collection<Student> studentsToAdd) {
-        this.studentsInGroup.addAll(studentsToAdd);
-        studentsToAdd.forEach(student -> student.getGroups().add(this));
-    }
 }

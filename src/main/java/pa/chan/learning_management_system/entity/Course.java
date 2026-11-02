@@ -18,7 +18,7 @@ public class Course extends BaseEntity {
     @Column(name = "course_name", nullable = false)
     private String courseName;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 1000)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

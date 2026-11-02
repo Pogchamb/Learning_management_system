@@ -11,13 +11,13 @@ import pa.chan.learning_management_system.entity.Course;
 @Mapper(componentModel = "spring", uses = {TeacherMapper.class})
 public interface CourseMapper {
 
-    @Mapping(target = "teacher", ignore = true)
-    @Mapping(target = "groups", ignore = true)
-    Course toEntity(CourseRequestDto courseRequestDto);
-
     CourseResponseDto toDto(Course course);
 
     CourseShortResponseDto toShortDto(Course course);
+
+    @Mapping(target = "teacher", ignore = true)
+    @Mapping(target = "groups", ignore = true)
+    Course toEntity(CourseRequestDto courseRequestDto);
 
     @Mapping(target = "teacher", ignore = true)
     @Mapping(target = "groups", ignore = true)

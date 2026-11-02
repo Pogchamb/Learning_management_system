@@ -11,5 +11,4 @@ public interface TeacherRepository extends BaseRepository<Teacher> {
         return "Преподователь";
     }
 
-    ;
 }
