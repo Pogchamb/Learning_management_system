@@ -1,6 +1,7 @@
 package pa.chan.learning_management_system.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import pa.chan.learning_management_system.entity.Student;
 import pa.chan.learning_management_system.exception.ResourceNotFoundException;
@@ -8,7 +9,7 @@ import pa.chan.learning_management_system.exception.ResourceNotFoundException;
 import java.util.Optional;
 
 @Repository
-public interface StudentRepository extends BaseRepository<Student> {
+public interface StudentRepository extends BaseRepository<Student>, JpaSpecificationExecutor<Student> {
     @Override
     default String getEntityName() {
         return "Студент";

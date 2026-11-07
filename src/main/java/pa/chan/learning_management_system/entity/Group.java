@@ -30,5 +30,4 @@ public class Group extends BaseEntity {
     @BatchSize(size = 50)
     @ManyToMany(mappedBy = "groups")
     private Set<Course> courses = new HashSet<>();
-
 }

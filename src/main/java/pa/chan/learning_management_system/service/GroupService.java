@@ -61,7 +61,7 @@ public class GroupService {
             );
         }
 
-        if (groupRepository.exists(StudentSpecifications.studentHasOnlyOneGroup(id))) {
+        if (studentRepository.exists(StudentSpecifications.studentHasOnlyOneGroup(id))) {
             throw new BusinessConflictException(
                     "Невозможно удалить группу с id " + id + ": в ней есть студенты, не состоящие в других группах"
             );

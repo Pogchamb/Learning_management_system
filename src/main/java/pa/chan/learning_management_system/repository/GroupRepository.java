@@ -7,7 +7,7 @@ import pa.chan.learning_management_system.entity.Group;
 import pa.chan.learning_management_system.entity.Student;
 
 @Repository
-public interface GroupRepository extends BaseRepository<Group>, JpaSpecificationExecutor<Student> {
+public interface GroupRepository extends BaseRepository<Group> {
     @Override
     default String getEntityName() {
         return "Группа";
